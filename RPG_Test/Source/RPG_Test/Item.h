@@ -80,6 +80,7 @@ public:
 
 	AItem();
 
+	static const FItemStruct EmptyItem;
 
 
 protected:

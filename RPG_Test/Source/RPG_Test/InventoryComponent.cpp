@@ -121,10 +121,8 @@ void UInventoryComponent::RemoveItem(AItem* ItemToRemove, int32 NumToRemove)
 
 
 }
-//TODO Add Functionality to account for stacks
-//TODO Add Functionality for dropping multiple items counts larger than one
-// Removes Item from inventory and spawns the item in the world
-void UInventoryComponent::DropItem()
+
+void UInventoryComponent::DropItem(FVector DropLocation, FRotator DropRotation, float DistanceAway)
 {
 	if (!(SlotArray.Num() > 0))
 	{
@@ -134,14 +132,40 @@ void UInventoryComponent::DropItem()
 
 	FItemStruct &ItemToDrop = SlotArray.Last();
 
+	DropTheItem(ItemToDrop, DropLocation, DropRotation, DistanceAway);
+
+}
+
+//TODO Add Functionality to account for stacks
+//TODO Add Functionality for dropping multiple items counts larger than one
+// Removes Item from inventory and spawns the item in the world
+void UInventoryComponent::DropTheItem(UPARAM(ref) FItemStruct &ItemToDrop, FVector DropLocation, FRotator DropRotation, float DistanceAway)
+{
+	if (!(SlotArray.Num() > 0))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Inventory Slot Array is empty so nothing can be dropped"));
+		return;
+	}
+
+
+
 	
 	if (ItemToDrop.GetItemCount() <= 0) { return; }	//Prevent creating negative item counts;
 
 
 	if (!ItemToDrop.GetItemBlueprint()) { return; }		//TODO Add functionality to still remove item from inventory when there is no valid blueprint
 
-	FVector DropLocation = GetOwner()->GetActorLocation();		//TODO Create richer Drop location
-	FRotator DropRotation = FRotator(0, 0, 0);
+	if (DropLocation == FVector(0.f))
+	{
+		if (DistanceAway == -1)		//TODO figure out alternative to determining if DistanceAway parameter has been supplied
+		{
+			DropLocation = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * DefaultDropDistance;
+		}
+		else
+		{
+			DropLocation = GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector() * DistanceAway;
+		}
+	}
 
 
 	if (!GetWorld()->SpawnActor(ItemToDrop.GetItemBlueprint(), &DropLocation, &DropRotation, SpawnParameters))
@@ -160,10 +184,12 @@ void UInventoryComponent::DropItem()
 		ItemToDrop.SetItemCount(ItemToDrop.GetItemCount() - 1);
 	}
 	
-
 }
 
-TArray<FItemStruct> UInventoryComponent::GetSlotArray()
+
+void UInventoryComponent::GetSlotArray(TArray<FItemStruct>& Array_Out)
 {
-	return SlotArray;
+	Array_Out = SlotArray;
 }
+
+

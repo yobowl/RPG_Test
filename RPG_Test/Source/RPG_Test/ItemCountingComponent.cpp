@@ -27,6 +27,7 @@ void UItemCountingComponent::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("Adding delegate to volume"));
 
 	ItemCountingVolume->OnActorBeginOverlap.AddDynamic(this, &UItemCountingComponent::OnVolumeOverlap);
+	ItemCountingVolume->OnActorEndOverlap.AddDynamic(this, &UItemCountingComponent::OnVolumeOverlap);
 
 }
 
@@ -40,7 +41,47 @@ void UItemCountingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 }
 
 
-void UItemCountingComponent::OnVolumeOverlap(class AActor* OtherActor, class AActor* Actor)
+void UItemCountingComponent::OnVolumeOverlap(AActor* OtherActor, AActor* Actor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("The Volume is working"));
+
+	ItemCountingVolume->GetOverlappingActors(OverlappingItems, OverlappingFilter); //Second Parameter can be used as a filter to return aactors MATCHING the filter
+
+	NumOfItems = OverlappingItems.Num();	//TODO make this also include counts of item stacks, possibly by creating new TArray function
+
+	OnThresholdTrigger();
+
+}
+
+void UItemCountingComponent::OnVolumeOverlapEnd(AActor * OtherActor, AActor * Actor)
+{
+
+	ItemCountingVolume->GetOverlappingActors(OverlappingItems, OverlappingFilter);	//Second Parameter can be used as a filter to return aactors MATCHING the filter
+
+	NumOfItems = OverlappingItems.Num();
+
+	OnThresholdTrigger();
+
+}
+
+// Determines if the 'Trigger' for this component should 'fire' and tells Actors they have binded an action to the delegate
+void UItemCountingComponent::OnThresholdTrigger()
+{
+	if (NumOfItems < ItemThreshold && ThresholdLessThanTrigger)
+	{
+		TriggerDelegate.Broadcast();
+		return;
+	}
+
+	if (NumOfItems == ItemThreshold && ThresholdEqualToTrigger)
+	{
+		TriggerDelegate.Broadcast();
+		return;
+	}
+
+	if (NumOfItems > ItemThreshold && ThresholdGreaterThanTrigger)
+	{
+		TriggerDelegate.Broadcast();
+		return;
+	}
+
 }

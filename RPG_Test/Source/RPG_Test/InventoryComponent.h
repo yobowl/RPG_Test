@@ -39,14 +39,18 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Storage Space")
 	uint8 ItemsPerStack = 99;	//This will be default, different items should specify respective max items/stack
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FItemStruct> SlotArray;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Storage Space")
 	uint8 CurrentStacks = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dropping Items")
+	float DefaultDropDistance = 150.f;
+
 	UPROPERTY(EditDefaultsOnly)
 	TMap<EItemType, int32> MaxItemMapping;
+
 
 	FActorSpawnParameters SpawnParameters;
 
@@ -59,8 +63,13 @@ public:
 	void AddItem(AItem* ItemToAdd, int32 NumToAdd);
 	void AddItem(FItemStruct ItemToAdd, int32 NumToAdd);
 	void RemoveItem(AItem* ItemToRemove, int32 NumToRemove);
-	void DropItem();
+	void DropItem(FVector DropLocation = FVector(0.f), FRotator DropRotation = FRotator(0.f, 0.f, 0.f), float DistanceAway = -1);
+
+	// Drops the item the default distance away from the component in the forward direction
+	UFUNCTION(BlueprintCallable)
+	void DropTheItem(UPARAM(ref) FItemStruct &ItemToDrop, FVector DropLocation = FVector(0.f), FRotator DropRotation = FRotator(0.f,0.f,0.f), float DistanceAway = -1);	
+	
 
 	UFUNCTION(BlueprintCallable)
-	TArray<FItemStruct> GetSlotArray();
+	void GetSlotArray(TArray<FItemStruct>& Array_Out);
 };
