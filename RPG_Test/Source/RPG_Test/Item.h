@@ -80,6 +80,9 @@ struct FItemStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	UTexture2D* ItemImage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	FName Owner = "None";
+
 	/// required to allow struct to be used in TArray
 	friend bool operator == (FItemStruct A, FItemStruct B);
 

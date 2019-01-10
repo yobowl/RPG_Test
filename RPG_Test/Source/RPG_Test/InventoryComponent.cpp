@@ -210,6 +210,7 @@ void UInventoryComponent::UseTheItem(UPARAM(ref)FItemStruct & ItemToUse)
 	if (!ItemToUse.GetItemBlueprint()) { return; }		//TODO Add functionality to still use item from inventory when there is no valid blueprint
 
 
+
 	if (ItemToUse.GetItemCount() <= 1)
 	{
 		SlotArray.RemoveSingle(ItemToUse);
