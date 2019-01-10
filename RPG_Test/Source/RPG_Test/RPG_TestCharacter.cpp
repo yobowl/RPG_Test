@@ -160,7 +160,11 @@ void ARPG_TestCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAxis("TurnRate", this, &ARPG_TestCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ARPG_TestCharacter::LookUpAtRate);
+	
+
 }
+
+
 
 void ARPG_TestCharacter::OnFire()
 {
@@ -371,7 +375,95 @@ void ARPG_TestCharacter::OnInventory()
 	ShowInventoryUI();
 }
 
+
+
 //void ARPG_TestCharacter::UpdateInventoryUI()
 //{
 //	//If anything should happen before updating inventory put it here...
 //}
+
+
+
+// Called when damage is taken
+float ARPG_TestCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	Health = Health - DamageAmount;
+
+	OnDamage();
+
+
+	// UE4 standards: this should return the actual amount of damage done
+	return DamageAmount;
+}
+
+
+
+
+void ARPG_TestCharacter::HealthUpdate()
+{
+	// Put any specific stuff here
+
+	//Implement Blueprint Health change behavior
+	OnHealthChange();
+
+}
+
+
+void ARPG_TestCharacter::SetHealth(float NewHealth)
+{
+	Health = NewHealth;
+	HealthUpdate();
+}
+
+void ARPG_TestCharacter::AddHealth(float HealthToAdd)
+{
+	Health = Health + HealthToAdd;
+	HealthUpdate();
+}
+
+void ARPG_TestCharacter::SubtractHealth(float HealthToSubtract)
+{
+	Health = HealthToSubtract;
+	HealthUpdate();
+}
+
+
+void ARPG_TestCharacter::Death()
+{
+	// Put any specific stuff here...
+	
+	//Implement Bueprint Death behavior
+	OnDeath();
+
+	// Actions taking care of player corpse
+	Destroy();
+}
+
+
+void ARPG_TestCharacter::OnDamage_Implementation()
+{
+
+	if (Health <= 0.f)
+	{
+		HealthUpdate();
+
+		Health = 0.f;
+
+		Death();
+
+	}
+
+	HealthUpdate();
+}
+
+void ARPG_TestCharacter::OnDeath_Implementation()
+{
+}
+
+void ARPG_TestCharacter::OnHealthChange_Implementation()
+{
+}
+
+

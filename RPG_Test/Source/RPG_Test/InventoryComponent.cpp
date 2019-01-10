@@ -56,32 +56,38 @@ void UInventoryComponent::AddItem(AItem* ItemToAdd, int32 NumToAdd)
 	bool IsItemAdded = false;
 
 	/// Create Item added to inventory and set the count of it
-	FItemStruct ItemToBeAdded;
-	ItemToBeAdded.SetItemCount(NumToAdd);
-	ItemToBeAdded.SetItemType(ItemToAdd->GetItemType());
-	ItemToBeAdded.SetItemName(ItemToAdd->GetItemName());
-	
-	if (!ItemToAdd->GetItemBlueprint())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Attempted picking up item which has not ItemBlueprint set!"));
-	}
+	//FItemStruct ItemToBeAdded;
+	//ItemToBeAdded.SetItemCount(NumToAdd);
+	//ItemToBeAdded.SetItemType(ItemToAdd->GetItemType());
+	//ItemToBeAdded.SetItemName(ItemToAdd->GetItemName());
+	//
+	//if (!ItemToAdd->GetItemBlueprint())
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("Attempted picking up item which has not ItemBlueprint set!"));
+	//}
 
-	if (!ItemToAdd->GetItemImage())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Attempted picking up item which has not ItemImage set!"));
-	}
+	//if (!ItemToAdd->GetItemImage())
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("Attempted picking up item which has not ItemImage set!"));
+	//}
 
-	ItemToBeAdded.SetItemBlueprint(ItemToAdd->GetItemBlueprint());
-	ItemToBeAdded.SetItemImage(ItemToAdd->GetItemImage());
+	//ItemToBeAdded.SetItemBlueprint(ItemToAdd->GetItemBlueprint());
+	//ItemToBeAdded.SetItemImage(ItemToAdd->GetItemImage());
+
+	FItemStruct ItemToBeAdded = ItemToAdd->GetItemProperties();
 
 	for (FItemStruct& Item : SlotArray)
 	{
 
 		if (ItemToBeAdded == Item)
 		{
-			Item.SetItemCount(Item.GetItemCount() + ItemToBeAdded.GetItemCount());	//TODO create functionality to create additional stacks if Count added is greater than stack max
+			if (ItemToBeAdded.IsStackable)
+			{
+				Item.SetItemCount(Item.GetItemCount() + ItemToBeAdded.GetItemCount());	//TODO create functionality to create additional stacks if Count added is greater than stack max
 
-			IsItemAdded = true;
+				IsItemAdded = true;
+			}
+
 		}
 
 		if (IsItemAdded) { break; }
@@ -184,6 +190,36 @@ void UInventoryComponent::DropTheItem(UPARAM(ref) FItemStruct &ItemToDrop, FVect
 		ItemToDrop.SetItemCount(ItemToDrop.GetItemCount() - 1);
 	}
 	
+}
+
+
+
+//TODO add functionality when items are used, currently just removes item
+void UInventoryComponent::UseTheItem(UPARAM(ref)FItemStruct & ItemToUse)
+{
+	
+	if (!(SlotArray.Num() > 0))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Inventory Slot Array is empty so nothing can be used"));
+		return;
+	}
+
+	if (ItemToUse.GetItemCount() <= 0) { return; }	//Prevent creating negative item counts;
+
+
+	if (!ItemToUse.GetItemBlueprint()) { return; }		//TODO Add functionality to still use item from inventory when there is no valid blueprint
+
+
+	if (ItemToUse.GetItemCount() <= 1)
+	{
+		SlotArray.RemoveSingle(ItemToUse);
+		CurrentStacks = CurrentStacks - 1;
+	}
+	else
+	{
+		ItemToUse.SetItemCount(ItemToUse.GetItemCount() - 1);
+	}
+
 }
 
 

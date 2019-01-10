@@ -90,6 +90,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint32 bUsingMotionControllers : 1;
 
+	UFUNCTION(BlueprintCallable)
+		void SetHealth(float NewHealth);
+
+	UFUNCTION(BlueprintCallable)
+		void AddHealth(float HealthToAdd);
+
+	UFUNCTION(BlueprintCallable)
+		void SubtractHealth(float HealthToSubtract);
+
 protected:
 	
 	/** Fires a projectile. */
@@ -138,15 +147,45 @@ protected:
 	FHitResult GrabResult;
 	FHitResult PickupResult;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
+	float Health = 100.f;
 
-	//This invokes the UI to update the inventory in the player character blueprint
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
+	float MaxHealth = 100.f;
+
+
+	// This invokes the UI to update the inventory in the player character blueprint
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Inventory UI Update"))
 	void UpdateInventoryUI();
 
-	//This invokes the UI to display the inventory using blueprint
+	// This invokes the UI to display the inventory using blueprint
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Toggle Inventory UI"))
 	void ShowInventoryUI();
+
+	// This event is implemented when damaged is taken
+	UFUNCTION(BlueprintNativeEvent, meta = (DisplayName = "Damage Taken"))
+	void OnDamage();
+
+	// This event is implemented when the character dies
+	UFUNCTION(BlueprintNativeEvent, meta = (DisplayName = "On Death"))
+	void OnDeath();
+
+	// This event is implemented when Health value changes
+	UFUNCTION(BlueprintNativeEvent, meta = (DisplayName = "On Health Change"))
+	void OnHealthChange();
+
 	
+	UFUNCTION(BlueprintCallable)
+	virtual void Death();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void HealthUpdate();
+
+
+
+	UFUNCTION(BlueprintCallable)
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser);
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;

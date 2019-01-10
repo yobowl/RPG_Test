@@ -69,6 +69,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DropTheItem(UPARAM(ref) FItemStruct &ItemToDrop, FVector DropLocation = FVector(0.f), FRotator DropRotation = FRotator(0.f,0.f,0.f), float DistanceAway = -1);	
 	
+	UFUNCTION(BlueprintCallable)
+	void UseTheItem(UPARAM(ref) FItemStruct &ItemToDrop);
 
 	UFUNCTION(BlueprintCallable)
 	void GetSlotArray(TArray<FItemStruct>& Array_Out);

@@ -10,8 +10,6 @@ FItemStruct::FItemStruct()
 	ItemName = "";
 	ItemType = EItemType::Null;
 
-
-
 }
 
 int32 FItemStruct::GetItemCount()
@@ -122,7 +120,6 @@ AItem::AItem()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-
 }
 
 
@@ -133,6 +130,8 @@ void AItem::BeginPlay()
 	
 }
 
+
+
 // Called every frame
 void AItem::Tick(float DeltaTime)
 {
@@ -142,65 +141,68 @@ void AItem::Tick(float DeltaTime)
 
 void AItem::SetItemName(FName Name)
 {
-	ItemName = Name;
+	ItemProperties.SetItemName(Name);
 }
 
 void AItem::SetItemCount(int32 Count)
 {
-	ItemCount = Count;
+	ItemProperties.SetItemCount(Count);
 }
 
 void AItem::SetItemType(EItemType Type)
 {
-	ItemType = Type;
+	ItemProperties.SetItemType(Type);
 }
 
 void AItem::SetItemBlueprint(TSubclassOf<AItem> Blueprint)
 {
 	if(!Blueprint) { return; }
 
-	ItemBlueprint = Blueprint;
+	ItemProperties.SetItemBlueprint(Blueprint);
 }
 
 void AItem::SetItemImage(UTexture2D * Image)
 {
 	if (!Image) { return; }
 
-	ItemImage = Image;
+	ItemProperties.SetItemImage(Image);
 }
 
 FName AItem::GetItemName()
 {
-	return ItemName;
+	return ItemProperties.GetItemName();
 }
 
 int32 AItem::GetItemCount()
 {
-	return ItemCount;
+	return ItemProperties.GetItemCount();
 }
 
 EItemType AItem::GetItemType()
 {
-	return ItemType;
+	return ItemProperties.GetItemType();
 }
 
 TSubclassOf<AItem> AItem::GetItemBlueprint()
 {
-	return ItemBlueprint;
+	return ItemProperties.GetItemBlueprint();
 }
 
-UTexture2D * AItem::GetItemImage()
+bool AItem::GetItemImage(UTexture2D* Item_Out)
 {
-	return ItemImage;
+	return ItemProperties.GetItemImage(Item_Out);
 }
 
-void AItem::CopyValues(AItem * ItemToCopy)
+void AItem::UseItem()
 {
-	ItemCount = ItemToCopy->ItemCount;
-	ItemName = ItemToCopy->ItemName;
-	ItemType = ItemToCopy->ItemType;
+}
 
-	return;
+void AItem::UseItem_Struct(FItemStruct & Item_Out)
+{
 }
 
 
+FItemStruct AItem::GetItemProperties()
+{
+	return ItemProperties;
+}

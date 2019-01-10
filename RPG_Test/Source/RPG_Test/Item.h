@@ -58,6 +58,21 @@ struct FItemStruct
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	EItemType ItemType = EItemType::Null;
 
+	//Tells Inventory Components if this item can stack 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	bool IsStackable = true;
+
+	// Defines whether item is consumed on use
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	bool IsConsumedOnUse = true;
+
+	// Defines whether the item can be picked up from the world
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
+	bool CanBePickedUp = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	bool IsUsable = false;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TSubclassOf<class AItem> ItemBlueprint;
 
@@ -88,31 +103,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	FName ItemName = "";
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	int32 ItemCount = 0;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	EItemType ItemType;
-
-	//Should Always reference the blueprint of the item
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	TSubclassOf<class AItem> ItemBlueprint;
-
-	// Icon to be used in the inventory
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	UTexture2D* ItemImage;
-
-	//Tells Inventory Components if this item can stack 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item")
-	bool IsStackable = true;
-
+	FItemStruct ItemProperties;
 	
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	FItemStruct GetItemProperties();
 
 	UFUNCTION(BlueprintCallable)
 	// Set Item Name
@@ -150,10 +149,16 @@ public:
 	TSubclassOf<AItem> GetItemBlueprint();
 
 	UFUNCTION(BlueprintCallable)
-	UTexture2D* GetItemImage();
+	// false if image is nullptr
+	bool GetItemImage(UTexture2D* Image_Out);
 
-	// Copies values to item from a different item
-	void CopyValues(AItem* ItemToCopy);
+	UFUNCTION(BlueprintCallable)
+	virtual void UseItem();
+
+	UFUNCTION(BlueprintCallable)
+	void UseItem_Struct(FItemStruct &Item_Out);
+
+
 
 private:
 
