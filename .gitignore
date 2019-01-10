@@ -11,3 +11,9 @@
 *.suo
 RPG_Test/Content/Test_RPG/Worlds/TestWorld_BuiltData.uasset
 */Content/AdvancedVillagePack/
+*/Content/Weapon_Pack/
+*/Content/AnimStarterPack/
+RPG_Test/Content/Weapons_Kit_BuiltData.uasset
+RPG_Test/.vs/RPG_Test/v15/Browse.VC.opendb
+RPG_Test/.vs/RPG_Test/v15/Solution.VC.db-wal
+RPG_Test/.vs/RPG_Test/v15/Solution.VC.db-shm
